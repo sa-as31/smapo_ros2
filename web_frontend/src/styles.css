@@ -151,6 +151,37 @@ body {
   line-height: 1.6;
 }
 
+.login-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+  padding: 6px;
+  border: 1px solid var(--editorial-border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.login-mode-switch button {
+  border: none;
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: transparent;
+  color: var(--editorial-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.login-mode-switch button.active {
+  color: #f6f2ea;
+  background: #5a6f45;
+  transform: translateY(-1px);
+}
+
 .login-role-row {
   display: grid;
   gap: 10px;
