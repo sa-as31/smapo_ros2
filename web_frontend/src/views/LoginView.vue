@@ -36,10 +36,6 @@
         <button class="role-toggle" :class="{ active: loginRole === 'admin' }" @click="setLoginRole('admin')">管理员</button>
         <button class="role-toggle" :class="{ active: loginRole === 'executor' }" @click="setLoginRole('executor')">飞手</button>
       </div>
-      <div class="login-access-strip">
-        <span class="login-access-chip">{{ roleHintText }}</span>
-        <span class="login-access-chip">{{ authMode === "login" ? "默认密码 1" : "密码至少 6 位" }}</span>
-      </div>
 
       <label v-if="authMode === 'register'" class="login-label">
         姓名
@@ -94,26 +90,13 @@ const registerConfirmPassword = ref("");
 const registerDisplayName = ref("");
 const registerDepartment = ref("");
 
-const roleHintText = computed(() => {
-  if (loginRole.value === "admin") return "管理员示例：admin";
-  if (loginRole.value === "requester") return "申请人示例：requester01";
-  return "飞手示例：executor01";
-});
-
 const actionButtonText = computed(() => {
   if (authStore.state.authBusy) return authMode.value === "login" ? "登录中..." : "注册中...";
   return authMode.value === "login" ? "登录系统" : "注册并进入";
 });
 
-function prefillByRole(role) {
-  if (authMode.value !== "login") return;
-  const first = authStore.state.authAccounts.find((item) => item.role === role);
-  if (first) loginUsername.value = first.username;
-}
-
 function setLoginRole(role) {
   loginRole.value = role === "admin" || role === "requester" ? role : "executor";
-  prefillByRole(loginRole.value);
 }
 
 function pushRoleHome() {
@@ -144,21 +127,13 @@ async function submitAuth() {
 
 onMounted(() => {
   if (authStore.state.authAccounts.length === 0) {
-    authStore.loadAuthOptions().then(() => {
-      prefillByRole(loginRole.value);
-    });
-  } else {
-    prefillByRole(loginRole.value);
+    authStore.loadAuthOptions();
   }
 });
 
-watch(authMode, (mode) => {
+watch(authMode, () => {
   loginPassword.value = "";
   registerConfirmPassword.value = "";
-  if (mode === "login") {
-    prefillByRole(loginRole.value);
-  } else if (loginUsername.value === roleHintText.value.split("：")[1]) {
-    loginUsername.value = "";
-  }
+  loginUsername.value = "";
 });
 </script>

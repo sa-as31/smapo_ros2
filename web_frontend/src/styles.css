@@ -211,25 +211,6 @@ body {
   transform: translateY(-1px);
 }
 
-.login-access-strip {
-  margin-top: 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.login-access-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid var(--editorial-border);
-  background: rgba(255, 255, 255, 0.62);
-  color: var(--editorial-subtle);
-  font-size: 13px;
-}
-
 .login-account-list {
   margin-top: 12px;
   display: grid;
