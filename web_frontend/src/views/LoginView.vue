@@ -24,12 +24,13 @@
 
     <article class="login-card editorial-card">
       <span class="eyebrow">System Access</span>
-      <h2>{{ authMode === "login" ? "进入系统" : "创建账号" }}</h2>
-      <p class="login-sub">{{ authMode === "login" ? "选择席位后登录当前工作台。" : "注册后会直接进入对应角色工作台。" }}</p>
-      <div class="login-mode-switch" role="tablist" aria-label="认证模式">
-        <button :class="{ active: authMode === 'login' }" @click="setAuthMode('login')">登录</button>
-        <button :class="{ active: authMode === 'register' }" @click="setAuthMode('register')">注册</button>
+      <div class="login-title-row">
+        <h2>{{ authMode === "login" ? "进入系统" : "创建账号" }}</h2>
+        <RouterLink class="auth-side-link" :to="authMode === 'login' ? '/register' : '/login'">
+          {{ authMode === "login" ? "注册" : "登录" }}
+        </RouterLink>
       </div>
+      <p class="login-sub">{{ authMode === "login" ? "选择席位后登录当前工作台。" : "注册后会直接进入对应角色工作台。" }}</p>
       <div class="login-role-row">
         <button class="role-toggle" :class="{ active: loginRole === 'requester' }" @click="setLoginRole('requester')">申请人</button>
         <button class="role-toggle" :class="{ active: loginRole === 'admin' }" @click="setLoginRole('admin')">管理员</button>
@@ -77,14 +78,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, watch } from 'vue';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
-const authMode = ref("login");
+const authMode = computed(() => route.path === "/register" ? "register" : "login");
 const loginRole = ref("requester");
 const loginUsername = ref("");
 const loginPassword = ref("");
@@ -107,17 +109,6 @@ function prefillByRole(role) {
   if (authMode.value !== "login") return;
   const first = authStore.state.authAccounts.find((item) => item.role === role);
   if (first) loginUsername.value = first.username;
-}
-
-function setAuthMode(mode) {
-  authMode.value = mode === "register" ? "register" : "login";
-  loginPassword.value = "";
-  registerConfirmPassword.value = "";
-  if (authMode.value === "login") {
-    prefillByRole(loginRole.value);
-  } else if (loginUsername.value === roleHintText.value.split("：")[1]) {
-    loginUsername.value = "";
-  }
 }
 
 function setLoginRole(role) {
@@ -158,6 +149,16 @@ onMounted(() => {
     });
   } else {
     prefillByRole(loginRole.value);
+  }
+});
+
+watch(authMode, (mode) => {
+  loginPassword.value = "";
+  registerConfirmPassword.value = "";
+  if (mode === "login") {
+    prefillByRole(loginRole.value);
+  } else if (loginUsername.value === roleHintText.value.split("：")[1]) {
+    loginUsername.value = "";
   }
 });
 </script>
